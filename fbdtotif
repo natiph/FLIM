@@ -1,5 +1,9 @@
 
 from lfdfiles import FlimboxFbd #you need the lfdfiles code from Christoph Gorke
+from lfdfiles import FlimboxFbd
+import numpy as np
+import tifffile
+import matplotlib.pyplot as plt
 
 def images_from_fbd_file(fbd_file_path,save=False):
     show: bool = True
@@ -43,8 +47,10 @@ def images_from_fbd_file(fbd_file_path,save=False):
         )
 
     if save:
-        ch1 =  np.moveaxis(np.sum(IMAGENES[:,0,:,:,:],axis=0), -1, 0)
-        tifffile.imwrite(path[:-12]+r'\summedimages.tif', ch1)
+        IMAGEN1 = np.sum(image[:,0,:,:,:],axis=0)
+        IMAGEN1_v2 =  np.moveaxis(IMAGEN1, -1, 0)
+        plt.imshow(IMAGEN1_v2[0,:,:])
+        tifffile.imwrite(fbd_file_path[:-12]+r'_summedimages.tif', IMAGEN1_v2)
         return image, frames
     else:
         return image, frames
