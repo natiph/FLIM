@@ -1,0 +1,54 @@
+
+from lfdfiles import FlimboxFbd #you need the lfdfiles code from Christoph Gorke
+
+def images_from_fbd_file(fbd_file_path,save=False):
+    show: bool = True
+    verbose: bool = True
+    integrate_frames: int = 0
+    square_frame: bool = True
+    pdiv: int = -1
+    laser_frequency: float = -1
+    laser_factor: float = -1.0
+    pixel_dwell_time: float = -1.0
+    frame_size: int = -1
+    scanner_line_length: int = -1
+    scanner_line_start: int = -1
+    scanner_frame_start: int = -1
+    cmap: str = 'turbo'
+    
+    fbdfile = fbd_file_path
+    
+    with FlimboxFbd(
+        fbdfile,
+        pdiv=pdiv,
+        laser_frequency=laser_frequency,
+        laser_factor=laser_factor,
+        pixel_dwell_time=pixel_dwell_time,
+        frame_size=frame_size,
+        scanner_line_length=scanner_line_length,
+        scanner_line_start=scanner_line_start,
+        scanner_frame_start=scanner_frame_start,
+    ) as fbd:
+    
+        decoded = fbd.decode()
+        bins, times, markers = decoded
+        #print(decoded)
+        frames = fbd.frames(decoded)
+        #print(frames)
+        image = fbd.asimage(
+            decoded,
+            frames,
+            integrate_frames=integrate_frames,
+            square_frame=square_frame
+        )
+
+    if save:
+        ch1 =  np.moveaxis(np.sum(IMAGENES[:,0,:,:,:],axis=0), -1, 0)
+        tifffile.imwrite(path[:-12]+r'\summedimages.tif', ch1)
+        return image, frames
+    else:
+        return image, frames
+    
+
+fbd_file_path = 'path to your file'
+IMAGENES, frames = images_from_fbd_file(fbd_file_path, save=True)
